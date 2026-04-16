@@ -6,6 +6,8 @@
   :root {
     --font-inter: 'Inter', system-ui, sans-serif;
     --font-baloo: 'Baloo 2', system-ui, sans-serif;
+    --font-brand: 'Great Vibes', cursive;
+    --font-serif: 'Cormorant Upright', serif;
   }
   
   body {

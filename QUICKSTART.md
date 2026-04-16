@@ -30,10 +30,18 @@ npm run dev
 
 Open http://localhost:3000 🎉
 
+### 6. Run the Tests
+```bash
+npm run test:ui
+npm run test:e2e
+```
+
 ## Daily Development
 
 ```bash
 npm run dev              # Start server
+npm run test:ui          # UI/component tests
+npm run test:e2e         # End-to-end smoke tests
 npx prisma studio        # View database
 npx prisma db push       # Update database schema
 ```
@@ -46,6 +54,7 @@ npx prisma db push       # Update database schema
 ✅ **Styling** - Tailwind + playful color palette configured  
 ✅ **Types** - Full TypeScript support  
 ✅ **Sample Data** - 8 products ready to display  
+✅ **Tests** - Vitest UI tests + Playwright smoke tests  
 
 ## Next: Build the Shop Page
 
@@ -67,4 +76,4 @@ export default async function ShopPage() {
 }
 ```
 
-Need help? Check `README.md` or `SETUP.md` for detailed instructions!
+Need help? Check `README.md`, `SETUP.md`, or `llm_context.md` for more detail.

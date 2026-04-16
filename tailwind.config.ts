@@ -46,6 +46,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         display: ['var(--font-baloo)', 'system-ui', 'sans-serif'],
+        brand: ['var(--font-brand)', 'cursive'],
+        serif: ['var(--font-serif)', 'serif'],
       },
       borderRadius: {
         'xl': '1rem',

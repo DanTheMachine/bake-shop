@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import ProductGrid from '@/components/products/product-grid';
 import ProductFilters from '@/components/products/product-filters';
+import Header from '@/components/layout/header';
 
 export default async function ShopPage({
   searchParams,
@@ -8,7 +9,7 @@ export default async function ShopPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const params = await searchParams;
-  
+
   let query = supabase
     .from('products')
     .select('*')
@@ -31,36 +32,23 @@ export default async function ShopPage({
     .select('category')
     .eq('available', true);
 
-  const categoryCounts = allProducts ? 
-    Object.entries(
-      allProducts.reduce((acc: any, p: any) => {
-        acc[p.category] = (acc[p.category] || 0) + 1;
-        return acc;
-      }, {})
-    ).map(([category, count]) => ({ category, _count: count as number })) : [];
-
-  console.log('Products:', products?.map(p => ({ id: p.id, name: p.name })));
+  const categoryCounts = allProducts
+    ? Object.entries(
+        allProducts.reduce((acc: Record<string, number>, p: { category: string }) => {
+          acc[p.category] = (acc[p.category] || 0) + 1;
+          return acc;
+        }, {})
+      ).map(([category, count]) => ({ category, _count: count }))
+    : [];
 
   return (
     <div className="min-h-screen bg-neutral-cream">
-      <header className="bg-white/80 backdrop-blur-sm border-b border-primary-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <a href="/" className="font-display text-3xl font-bold text-primary-500">Sweet Delights Bakery</a>
-            <div className="flex gap-6">
-              <a href="/shop" className="text-primary-500 font-semibold">Shop</a>
-              <a href="/custom-cakes" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">Custom Cakes</a>
-              <a href="/about" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">About</a>
-              <a href="/cart" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">Cart (0)</a>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <section className="bg-gradient-to-br from-secondary-50 via-primary-50 to-purple-50 py-12 px-4">
         <div className="container mx-auto text-center">
           <h1 className="font-display text-5xl font-bold text-neutral-charcoal mb-4">Our Delicious Treats</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Handcrafted with love, baked fresh daily.</p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Purely Proofed — handcrafted with love, baked fresh daily.</p>
         </div>
       </section>
 

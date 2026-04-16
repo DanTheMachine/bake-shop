@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
+import AddToCartButton from './add-to-cart-button';
 
 interface ProductGridProps {
   products: any[];
@@ -55,10 +56,10 @@ function ProductCard({ product }: { product: any }) {
   const emoji = emojiMap[product.name] || '🧁';
 
   return (
-    <Link href={`/shop/${product.id}`}>
-      <div className="card group cursor-pointer h-full flex flex-col">
-        <div className="relative h-64 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
-          <span className="text-8xl">{emoji}</span>
+    <div className="card group h-full flex flex-col">
+      <Link href={`/shop/${product.id}`}>
+        <div className="relative h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+          <span className="text-7xl">{emoji}</span>
           <div className="absolute top-3 right-3">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryColors[product.category]}`}>
               {categoryLabels[product.category]}
@@ -70,22 +71,26 @@ function ProductCard({ product }: { product: any }) {
           <h3 className="font-display text-xl font-semibold mb-2 text-neutral-charcoal group-hover:text-primary-500 transition-colors">
             {product.name}
           </h3>
-          
           <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">{product.description}</p>
-
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="pt-4 border-t border-gray-100 mb-3">
             <span className="font-display text-2xl font-bold text-primary-500">
               {formatPrice(Number(product.price))}
             </span>
-            
-            {product.requires_custom_form ? (
-              <span className="text-sm text-gray-500 italic">Custom Order</span>
-            ) : (
-              <button className="btn-primary text-sm px-4 py-2">Add to Cart</button>
-            )}
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {product.requires_custom_form ? (
+        <Link href="/custom-cakes" className="btn-outline text-sm text-center block">
+          Custom Order
+        </Link>
+      ) : (
+        <AddToCartButton
+          product={{ id: product.id, name: product.name, price: product.price, available: product.available }}
+          emoji={emoji}
+          size="sm"
+        />
+      )}
+    </div>
   );
 }

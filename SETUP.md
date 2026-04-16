@@ -98,6 +98,20 @@ You should see the beautiful homepage with:
 - Call-to-action section
 - Footer
 
+## Step 7: Run the Tests
+
+```bash
+# UI/component tests with coverage
+npm run test:ui
+
+# Browser smoke tests
+npm run test:e2e
+```
+
+Notes:
+- The E2E suite uses Playwright and may download Chromium the first time it runs.
+- CI runs the same test commands in `.github/workflows/tests.yml`.
+
 ## Step 8: Verify Database (Optional)
 
 Open Prisma Studio to see your database:

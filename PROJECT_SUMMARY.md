@@ -4,7 +4,7 @@
 
 I've built a complete Next.js 15 foundation for your wife's bakery e-commerce site. Here's everything that's ready:
 
-### Files Created (23 total)
+### Files Created (now includes testing + CI)
 ```
 bake/
 ├── Configuration Files (7)
@@ -16,10 +16,11 @@ bake/
 │   ├── .eslintrc.json         - Code linting
 │   └── .gitignore             - Git exclusions
 │
-├── Documentation (4)
+├── Documentation (5)
 │   ├── README.md              - Full project documentation
 │   ├── SETUP.md               - Step-by-step setup guide
 │   ├── QUICKSTART.md          - 5-minute getting started
+│   ├── llm_context.md         - Current project/testing context
 │   └── .env.example           - Environment variables template
 │
 ├── Database (2)
@@ -83,6 +84,9 @@ bake/
 ✅ Stripe (ready to integrate)
 ✅ Resend (email ready)
 ✅ Cloudinary (image hosting ready)
+✅ Vitest + Testing Library
+✅ Playwright
+✅ GitHub Actions test workflow
 
 ## 🚀 Next Steps for You
 
@@ -139,10 +143,20 @@ Everything is wired up and ready to go!
 ```bash
 npm run dev           # Start development server
 npm run build         # Build for production
+npm run test:ui       # Run UI/component tests with coverage
+npm run test:e2e      # Run Playwright E2E smoke tests
+npm test              # Run all automated tests
 npx prisma studio     # View/edit database (GUI)
 npx prisma db push    # Update database schema
 npx prisma db seed    # Add sample products
 ```
+
+## 🧪 Automated Testing
+
+- UI tests live in `tests/ui`
+- E2E smoke tests live in `tests/e2e`
+- CI workflow lives in `.github/workflows/tests.yml`
+- Test artifacts such as `coverage/` and `test-results/` are git-ignored
 
 ## 💰 Current Costs
 

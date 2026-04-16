@@ -63,6 +63,19 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
+### 5. Run Tests
+
+```bash
+# UI/component tests
+npm run test:ui
+
+# End-to-end smoke tests
+npm run test:e2e
+
+# Run both suites
+npm test
+```
+
 ## 📁 Project Structure
 
 ```
@@ -197,6 +210,16 @@ ADMIN_EMAIL="your@email.com"
 - [ ] Email marketing signup
 - [ ] Customer accounts
 
+## 🧪 Testing
+
+- UI tests: Vitest + Testing Library
+- E2E tests: Playwright + Chromium
+- UI tests live in `tests/ui`
+- E2E tests live in `tests/e2e`
+- CI workflow: `.github/workflows/tests.yml`
+
+The Playwright config uses placeholder Supabase environment values so smoke tests can boot the app in CI without production secrets.
+
 ## 🛠️ Scripts
 
 ```bash
@@ -204,6 +227,9 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
+npm run test:ui      # Run Vitest UI tests with coverage
+npm run test:e2e     # Run Playwright E2E smoke tests
+npm test             # Run both test suites
 npx prisma studio    # Open Prisma Studio (database GUI)
 npx prisma db push   # Push schema changes to database
 ```
