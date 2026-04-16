@@ -1,0 +1,140 @@
+// This is your Prisma schema file for the Artisan Bakery e-commerce platform
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Product categories
+enum ProductCategory {
+  CUSTOM_CAKE
+  READY_MADE
+  SEASONAL
+  GIFT_BOX
+}
+
+// Payment status
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CASH_ON_PICKUP
+}
+
+// Order fulfillment status
+enum FulfillmentStatus {
+  RECEIVED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+// Custom order request status
+enum CustomOrderStatus {
+  PENDING
+  QUOTED
+  ACCEPTED
+  DECLINED
+}
+
+// Products table
+model Product {
+  id                   String          @id @default(uuid())
+  name                 String
+  description          String
+  category             ProductCategory
+  price                Decimal         @db.Decimal(10, 2)
+  images               String[]        // Array of image URLs
+  available            Boolean         @default(true)
+  requiresCustomForm   Boolean         @default(false) @map("requires_custom_form")
+  
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+  
+  // Relations
+  orderItems           OrderItem[]
+  
+  @@map("products")
+}
+
+// Orders table
+model Order {
+  id                   String            @id @default(uuid())
+  orderNumber          String            @unique @map("order_number")
+  customerName         String            @map("customer_name")
+  customerEmail        String            @map("customer_email")
+  customerPhone        String            @map("customer_phone")
+  deliveryAddress      String?           @map("delivery_address")
+  pickupDate           DateTime?         @map("pickup_date")
+  totalAmount          Decimal           @db.Decimal(10, 2) @map("total_amount")
+  paymentStatus        PaymentStatus     @default(PENDING) @map("payment_status")
+  fulfillmentStatus    FulfillmentStatus @default(RECEIVED) @map("fulfillment_status")
+  stripePaymentIntentId String?          @map("stripe_payment_intent_id")
+  specialInstructions  String?           @map("special_instructions")
+  
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  
+  // Relations
+  items                OrderItem[]
+  
+  @@map("orders")
+}
+
+// Order items (line items)
+model OrderItem {
+  id                   String  @id @default(uuid())
+  orderId              String  @map("order_id")
+  productId            String? @map("product_id")
+  productName          String  @map("product_name")
+  quantity             Int
+  unitPrice            Decimal @db.Decimal(10, 2) @map("unit_price")
+  customDetails        Json?   @map("custom_details") // For cake customization details
+  
+  // Relations
+  order                Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product              Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  @@map("order_items")
+}
+
+// Custom order requests (for quotes)
+model CustomOrderRequest {
+  id                   String            @id @default(uuid())
+  customerName         String            @map("customer_name")
+  customerEmail        String            @map("customer_email")
+  customerPhone        String            @map("customer_phone")
+  eventDate            DateTime          @map("event_date")
+  cakeSize             String            @map("cake_size")
+  flavors              String
+  designDescription    String            @map("design_description")
+  referenceImages      String[]          @map("reference_images") // Array of image URLs
+  budget               String?
+  status               CustomOrderStatus @default(PENDING)
+  quotedPrice          Decimal?          @db.Decimal(10, 2) @map("quoted_price")
+  adminNotes           String?           @map("admin_notes")
+  
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  
+  @@map("custom_order_requests")
+}
+
+// Admin users (for dashboard access)
+model AdminUser {
+  id                   String   @id @default(uuid())
+  email                String   @unique
+  role                 String   @default("admin") // admin or staff
+  
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  
+  @@map("admin_users")
+}

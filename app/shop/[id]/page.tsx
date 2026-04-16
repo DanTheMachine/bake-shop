@@ -1,0 +1,156 @@
+import { supabase } from '@/lib/supabase';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { formatPrice } from '@/lib/utils';
+
+const emojiMap: Record<string, string> = {
+  'Classic Chocolate Cake': '🍫',
+  'Vanilla Bean Cupcakes (6-pack)': '🧁',
+  'Strawberry Shortcake': '🍓',
+  'Custom Birthday Cake': '🎂',
+  'Assorted Cookie Box': '🍪',
+  'Lemon Blueberry Loaf': '🍋',
+  'Red Velvet Cake': '❤️',
+  'Holiday Gift Basket': '🎁',
+};
+
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !product) {
+    notFound();
+  }
+
+  const categoryLabels: Record<string, string> = {
+    CUSTOM_CAKE: 'Custom Cake',
+    READY_MADE: 'Ready Made',
+    SEASONAL: 'Seasonal',
+    GIFT_BOX: 'Gift Box',
+  };
+
+  const emoji = emojiMap[product.name] || '🧁';
+
+  return (
+    <div className="min-h-screen bg-neutral-cream">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-primary-100 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <nav className="flex items-center justify-between">
+            <Link href="/" className="font-display text-3xl font-bold text-primary-500">Sweet Delights</Link>
+            <div className="flex gap-6">
+              <Link href="/shop" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">Shop</Link>
+              <Link href="/custom-cakes" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">Custom Cakes</Link>
+              <Link href="/about" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">About</Link>
+              <Link href="/cart" className="text-neutral-charcoal hover:text-primary-500 transition-colors font-medium">Cart (0)</Link>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <div className="bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 py-4">
+          <nav className="flex items-center gap-2 text-sm">
+            <Link href="/" className="text-gray-500 hover:text-primary-500">Home</Link>
+            <span className="text-gray-400">/</span>
+            <Link href="/shop" className="text-gray-500 hover:text-primary-500">Shop</Link>
+            <span className="text-gray-400">/</span>
+            <span className="text-neutral-charcoal font-medium">{product.name}</span>
+          </nav>
+        </div>
+      </div>
+
+      <section className="py-12 px-4">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <div>
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+                <span className="text-9xl">{emoji}</span>
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-4">
+                <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold">
+                  {categoryLabels[product.category]}
+                </span>
+              </div>
+
+              <h1 className="font-display text-4xl font-bold text-neutral-charcoal mb-4">{product.name}</h1>
+
+              <div className="flex items-baseline gap-3 mb-6">
+                <span className="font-display text-4xl font-bold text-primary-500">
+                  {formatPrice(Number(product.price))}
+                </span>
+              </div>
+
+              <div className="prose prose-lg mb-8">
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              </div>
+
+              <div className="mb-8">
+                {product.available ? (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="font-medium">In Stock - Fresh Daily</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                    <span className="font-medium">Currently Unavailable</span>
+                  </div>
+                )}
+              </div>
+
+              {product.requires_custom_form ? (
+                <div className="space-y-4">
+                  <Link href="/custom-cakes" className="btn-primary w-full text-center block">
+                    Request Custom Quote
+                  </Link>
+                  <p className="text-sm text-gray-600 text-center">
+                    This item requires a custom order.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <button className="btn-primary w-full">
+                    Add to Cart
+                  </button>
+                  <p className="text-sm text-gray-600 text-center">
+                    Free pickup - Local delivery available
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className="font-display text-lg font-semibold mb-4">Product Details</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <span className="text-primary-500 mt-1">✓</span>
+                    <span className="text-gray-700">Made fresh daily with premium ingredients</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-primary-500 mt-1">✓</span>
+                    <span className="text-gray-700">No artificial preservatives or flavors</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-primary-500 mt-1">✓</span>
+                    <span className="text-gray-700">Available for pickup or local delivery</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
