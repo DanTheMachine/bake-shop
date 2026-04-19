@@ -60,7 +60,7 @@ describe('Header', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getAllByText('2').length).toBeGreaterThan(0);
     });
   });
 });

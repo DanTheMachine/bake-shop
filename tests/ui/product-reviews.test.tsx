@@ -89,7 +89,7 @@ describe('ProductReviews', () => {
 
     const nameInput = screen.getByPlaceholderText('Jane S.');
     fireEvent.change(nameInput, { target: { value: 'Test User' } });
-    fireEvent.submit(screen.getByRole('form') ?? document.querySelector('form')!);
+    fireEvent.submit(document.querySelector('form')!);
 
     await waitFor(() => {
       expect(screen.getByText(/Please select a star rating/i)).toBeInTheDocument();
