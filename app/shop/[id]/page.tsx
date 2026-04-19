@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import Header from '@/components/layout/header';
 import AddToCartButton from '@/components/products/add-to-cart-button';
+import ProductReviews from '@/components/products/product-reviews';
 
 const emojiMap: Record<string, string> = {
   'Classic Chocolate Cake': '🍫',
@@ -140,6 +141,12 @@ export default async function ProductDetailPage({
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="py-8 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <ProductReviews productId={id} />
         </div>
       </section>
     </div>

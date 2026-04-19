@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateOrderNumber } from '@/lib/utils';
+import { sendOrderConfirmation, sendAdminOrderNotification } from '@/lib/email';
 import type { CartItem } from '@/types';
 
 export async function POST(request: Request) {
@@ -53,6 +54,11 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    await Promise.all([
+      sendOrderConfirmation({ to: customerEmail, orderNumber, customerName, items, total, pickupDate, paymentMethod }),
+      sendAdminOrderNotification({ orderNumber, customerName, customerEmail, customerPhone, items, total, pickupDate, paymentMethod }),
+    ]);
 
     return NextResponse.json({ orderNumber: order.orderNumber });
   } catch (err) {

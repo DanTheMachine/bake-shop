@@ -1,61 +1,64 @@
-# Artisan Bakery E-Commerce Platform
+# Rise by Amy — Bake Shop
 
-A modern, full-featured e-commerce platform for selling artisan baked goods, built with Next.js 15, TypeScript, Tailwind CSS, Prisma, and Supabase.
+A full-featured e-commerce platform for Rise by Amy, built with Next.js 15, TypeScript, Tailwind CSS, Prisma, and Supabase.
 
-## 🎯 Features
+---
 
-- ✅ Product catalog with categories (custom cakes, ready-made, seasonal, gift boxes)
-- ✅ Shopping cart functionality
-- ✅ Multiple ordering methods (buy now, pre-order, custom orders)
-- ✅ Stripe payment integration
-- ✅ Cash on pickup option
-- ✅ Custom cake quote requests
-- ✅ Admin dashboard for order and product management
-- ✅ Email notifications (order confirmations, status updates)
-- ✅ Responsive, playful design
+## Tech Stack
 
-## 🚀 Quick Start
+| Layer | Tool |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Database | PostgreSQL via Supabase |
+| ORM | Prisma |
+| Auth | Supabase Auth |
+| Payments | Stripe |
+| Email | Resend |
+| Hosting | Vercel |
+
+---
+
+## Running the App
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- npm or yarn
-- Supabase account (free tier)
-- Stripe account (test mode)
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+- A [Stripe](https://stripe.com) account (test mode is fine to start)
 
-### 1. Install Dependencies
+### 1. Install dependencies
 
 ```bash
-cd c:\projects\bake
 npm install
 ```
 
-### 2. Set Up Supabase
+### 2. Configure environment variables
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Copy your project URL and API keys
-3. Copy `.env.example` to `.env.local`:
+Copy the example file and fill in your values:
 
 ```bash
 cp .env.example .env.local
 ```
 
-4. Fill in your Supabase credentials in `.env.local`
-
-### 3. Initialize Database
+You also need a `.env` file for Prisma CLI (it doesn't read `.env.local`):
 
 ```bash
-# Generate Prisma client
-npx prisma generate
-
-# Push schema to Supabase
-npx prisma db push
-
-# (Optional) Seed with sample data
-npx prisma db seed
+# .env  (Prisma CLI only)
+DATABASE_URL="postgresql://..."
+DIRECT_URL="postgresql://..."
 ```
 
-### 4. Run Development Server
+See [Environment Variables](#environment-variables) below for the full reference.
+
+### 3. Push the database schema
+
+```bash
+npx prisma db push
+```
+
+### 4. Start the dev server
 
 ```bash
 npm run dev
@@ -63,95 +66,109 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
-### 5. Run Tests
+### Useful commands
 
 ```bash
-# UI/component tests
-npm run test:ui
-
-# End-to-end smoke tests
-npm run test:e2e
-
-# Run both suites
-npm test
+npm run dev           # Start development server
+npm run build         # Build for production
+npm run lint          # Run ESLint
+npm run test:ui       # Run Vitest component tests
+npm run test:e2e      # Run Playwright E2E tests
+npm test              # Run both test suites
+npx prisma studio     # Open database GUI in browser
+npx prisma db push    # Push schema changes to database
 ```
 
-## 📁 Project Structure
+---
 
-```
-bake/
-├── app/                    # Next.js app directory
-│   ├── layout.tsx         # Root layout with fonts
-│   ├── page.tsx           # Homepage
-│   └── globals.css        # Global styles
-├── lib/                   # Utility functions
-│   ├── prisma.ts          # Prisma client
-│   ├── supabase.ts        # Supabase clients
-│   └── utils.ts           # Helper functions
-├── prisma/
-│   └── schema.prisma      # Database schema
-├── public/                # Static assets
-├── .env.example           # Environment variables template
-├── next.config.ts         # Next.js configuration
-├── tailwind.config.ts     # Tailwind configuration
-└── package.json           # Dependencies
-```
+## Admin Workflows
 
-## 🗄️ Database Schema
+The admin section lives at `/admin`. There is no link to it from the public site — navigate there directly.
 
-### Products
-- Product catalog with images, pricing, categories
-- Support for custom cake products
+### Accessing the Admin
 
-### Orders
-- Complete order management
-- Payment and fulfillment status tracking
-- Customer information
+1. Go to `http://localhost:3000/admin/login`
+2. Sign in with an email/password user created in your Supabase project under **Authentication → Users → Add user**
 
-### Order Items
-- Line items for each order
-- Custom cake details stored as JSON
+### Adding a Product
 
-### Custom Order Requests
-- Quote request system
-- Image uploads for reference
-- Admin response workflow
+1. Go to `/admin/products`
+2. Click **Add Product**
+3. Fill in: name, description, category, price
+4. Toggle **Available** on to make it visible in the shop
+5. Save — the product appears in the shop immediately
 
-### Admin Users
-- Dashboard access control
+Categories: `CUSTOM_CAKE`, `READY_MADE`, `SEASONAL`, `GIFT_BOX`
 
-## 🎨 Design System
+### Processing an Order
 
-### Color Palette
-- **Primary**: Warm pink/coral (#FF6B9D)
-- **Secondary**: Soft yellow/cream (#FFE5B4)
-- **Accent**: Mint green (#A8E6CF), Lavender (#E1BEE7)
-- **Neutrals**: Charcoal (#333), Warm white (#FFFBF5)
+Orders come in two ways: Stripe (card payment) and cash on pickup.
 
-### Typography
-- **Display Font**: Baloo 2 (headings)
-- **Body Font**: Inter (text)
+**Stripe orders** are created as `PENDING` until Stripe confirms payment via webhook, then move to `PAID` automatically.
 
-### Custom Classes
-- `btn-primary` - Primary call-to-action button
-- `btn-secondary` - Secondary button
-- `btn-outline` - Outlined button
-- `card` - Product/content card
-- `input-field` - Form input styling
+**Cash orders** are created immediately with status `CASH_ON_PICKUP`.
 
-## 🔧 Configuration
+To process an order:
 
-### Environment Variables
+1. Go to `/admin/orders`
+2. Click an order to expand its details
+3. Use the **Fulfillment Status** dropdown to update progress:
+   - `RECEIVED` → order received, not started
+   - `PREPARING` → actively being baked/assembled
+   - `READY` → ready for customer pickup
+   - `COMPLETED` → picked up
+   - `CANCELLED` → cancelled
+4. Each status change automatically sends the customer a notification email
 
-Create `.env.local` with:
+### Handling a Custom Cake Request
+
+1. Go to `/admin/custom-requests`
+2. Click a request to see the customer's details: event date, cake size, flavors, design notes, budget
+3. Enter a quoted price and any notes
+4. Update the status to `QUOTED`
+5. Follow up with the customer directly (phone or email shown on the request)
+
+Statuses: `PENDING` → `QUOTED` → `ACCEPTED` / `DECLINED`
+
+### Moderating Reviews
+
+Customer reviews are hidden until approved.
+
+1. Go to `/admin/reviews`
+2. Toggle **Approved** on to publish a review to the product page
+3. Delete any spam or inappropriate submissions
+
+---
+
+## Customer Flows
+
+### Browsing & Ordering
+
+1. `/shop` — browse all products, filter by category
+2. `/shop/[id]` — product detail, add to cart, read reviews
+3. `/cart` — review cart, adjust quantities
+4. `/checkout` — enter name, email, phone, pickup date, choose card or cash
+5. `/checkout/success` — order confirmation with order number
+
+### Custom Cake Request
+
+1. `/custom-cakes` — fill out the request form (event date, size, flavors, design, budget)
+2. Confirmation email sent automatically
+3. Admin reviews and sends back a quote
+
+### Order Lookup
+
+Customers can check their order status at `/orders/lookup` using their email address — no account required.
+
+---
+
+## Environment Variables
+
+### `.env.local` (Next.js + runtime)
 
 ```env
-# Database (Supabase)
-DATABASE_URL="postgresql://..."
-DIRECT_URL="postgresql://..."
-
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL="https://..."
+NEXT_PUBLIC_SUPABASE_URL="https://[project-ref].supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
 SUPABASE_SERVICE_ROLE_KEY="..."
 
@@ -160,114 +177,83 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 
-# Email (Resend)
+# Email (Resend) — optional, emails are skipped silently if not set
 RESEND_API_KEY="re_..."
-
-# Cloudinary
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="..."
-CLOUDINARY_API_KEY="..."
-CLOUDINARY_API_SECRET="..."
 
 # App
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ADMIN_EMAIL="your@email.com"
 ```
 
-## 📋 Next Steps (Development Roadmap)
+### `.env` (Prisma CLI only)
 
-### Phase 2: Core Features (Current Phase)
-- [ ] Create Shop page with product grid
-- [ ] Build Product detail page
-- [ ] Implement shopping cart (local storage)
-- [ ] Set up Cloudinary for images
-
-### Phase 3: Checkout & Payments
-- [ ] Integrate Stripe checkout
-- [ ] Build checkout flow
-- [ ] Implement pickup date selection
-- [ ] Add cash on pickup option
-
-### Phase 4: Custom Orders
-- [ ] Create custom cake order form
-- [ ] Add image upload functionality
-- [ ] Build quote request system
-
-### Phase 5: Admin Dashboard
-- [ ] Set up admin authentication
-- [ ] Build dashboard overview
-- [ ] Create order management interface
-- [ ] Add product management (CRUD)
-
-### Phase 6: Email & Polish
-- [ ] Integrate Resend for emails
-- [ ] Create email templates
-- [ ] Mobile responsiveness
-- [ ] SEO optimization
-
-### Phase 7: Nice-to-Have (Post-Launch)
-- [ ] Customer reviews/ratings
-- [ ] Instagram feed integration
-- [ ] Email marketing signup
-- [ ] Customer accounts
-
-## 🧪 Testing
-
-- UI tests: Vitest + Testing Library
-- E2E tests: Playwright + Chromium
-- UI tests live in `tests/ui`
-- E2E tests live in `tests/e2e`
-- CI workflow: `.github/workflows/tests.yml`
-
-The Playwright config uses placeholder Supabase environment values so smoke tests can boot the app in CI without production secrets.
-
-## 🛠️ Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run test:ui      # Run Vitest UI tests with coverage
-npm run test:e2e     # Run Playwright E2E smoke tests
-npm test             # Run both test suites
-npx prisma studio    # Open Prisma Studio (database GUI)
-npx prisma db push   # Push schema changes to database
+```env
+DATABASE_URL="postgresql://[user]:[password]@[host]:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://[user]:[password]@[host]:5432/postgres"
 ```
 
-## 📦 Tech Stack
+Both URLs come from Supabase under **Project Settings → Database → Connection string**.
+Use port `6543` (pooled) for `DATABASE_URL` and port `5432` (direct) for `DIRECT_URL`.
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui
-- **Database**: PostgreSQL (via Supabase)
-- **ORM**: Prisma
-- **Authentication**: Supabase Auth
-- **Payments**: Stripe
-- **Email**: Resend
-- **Images**: Cloudinary
-- **Hosting**: Vercel
+### Setting up Stripe webhooks locally
 
-## 💰 Estimated Costs
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
 
-| Service | Tier | Monthly Cost |
-|---------|------|--------------|
-| Vercel | Hobby | $0 |
-| Supabase | Free | $0 |
-| Stripe | Pay-as-you-go | 2.9% + $0.30/txn |
-| Cloudinary | Free | $0 |
-| Resend | Free | $0 (3k emails/mo) |
-| Domain | Annual | ~$12/year |
-
-**Total Fixed Costs**: ~$1/month
-
-## 🤝 Contributing
-
-This is a private project. For questions or issues, contact the project owner.
-
-## 📄 License
-
-Private - All Rights Reserved
+Copy the webhook signing secret it prints and set it as `STRIPE_WEBHOOK_SECRET` in `.env.local`.
 
 ---
 
-Built with ❤️ for Sweet Delights Bakery
+## Routes Reference
+
+### Public
+
+| Route | Description |
+|---|---|
+| `/` | Homepage |
+| `/shop` | Product grid with category filters |
+| `/shop/[id]` | Product detail + reviews |
+| `/cart` | Shopping cart |
+| `/checkout` | Checkout form |
+| `/checkout/success` | Order confirmation |
+| `/custom-cakes` | Custom cake request form |
+| `/custom-cakes/success` | Request confirmation |
+| `/orders/lookup` | Order status lookup by email |
+| `/about` | About the bakery |
+
+### Admin
+
+| Route | Description |
+|---|---|
+| `/admin/login` | Admin sign-in |
+| `/admin/dashboard` | Stats overview |
+| `/admin/orders` | Order management |
+| `/admin/custom-requests` | Custom cake quote requests |
+| `/admin/products` | Product CRUD |
+| `/admin/reviews` | Review moderation |
+
+---
+
+## Database Schema
+
+| Model | Purpose |
+|---|---|
+| `Product` | Catalog items with price, category, availability |
+| `Order` | Customer orders with payment + fulfillment status |
+| `OrderItem` | Line items per order |
+| `CustomOrderRequest` | Custom cake quote requests |
+| `Review` | Customer reviews (moderated) |
+| `NewsletterSubscriber` | Email list |
+
+---
+
+## Costs
+
+| Service | Plan | Cost |
+|---|---|---|
+| Vercel | Hobby | Free |
+| Supabase | Free tier | Free |
+| Stripe | Pay-as-you-go | 2.9% + $0.30/transaction |
+| Resend | Free tier | Free (3k emails/mo) |
+| Domain | Annual | ~$12/year |

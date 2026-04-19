@@ -51,17 +51,42 @@ model Product {
   description          String
   category             ProductCategory
   price                Decimal         @db.Decimal(10, 2)
-  images               String[]        // Array of image URLs
+  images               String[]
   available            Boolean         @default(true)
   requiresCustomForm   Boolean         @default(false) @map("requires_custom_form")
-  
+
   createdAt            DateTime        @default(now()) @map("created_at")
   updatedAt            DateTime        @updatedAt @map("updated_at")
-  
-  // Relations
+
   orderItems           OrderItem[]
-  
+  reviews              Review[]
+
   @@map("products")
+}
+
+// Customer reviews
+model Review {
+  id          String   @id @default(uuid())
+  productId   String   @map("product_id")
+  authorName  String   @map("author_name")
+  rating      Int
+  comment     String?
+  approved    Boolean  @default(false)
+
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+// Newsletter subscribers
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("newsletter_subscribers")
 }
 
 // Orders table

@@ -55,6 +55,24 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
+      if (form.paymentMethod === 'online') {
+        const res = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...form, items, total }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to start payment');
+        }
+
+        const { url } = await res.json();
+        clearCart();
+        window.location.href = url;
+        return;
+      }
+
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -243,7 +261,10 @@ export default function CheckoutPage() {
                   disabled={submitting}
                   className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {submitting ? 'Placing Order...' : 'Place Order'}
+                  {submitting
+                    ? (form.paymentMethod === 'online' ? 'Redirecting to Payment...' : 'Placing Order...')
+                    : (form.paymentMethod === 'online' ? 'Pay with Card' : 'Place Order')
+                  }
                 </button>
                 <Link href="/cart" className="btn-outline w-full text-center block mt-3">
                   Back to Cart

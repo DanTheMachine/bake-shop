@@ -33,10 +33,25 @@ const greatVibes = Great_Vibes({
   weight: "400",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+
 export const metadata: Metadata = {
-  title: "Rise By Amy — Purely Proofed",
-  description: "Handcrafted cakes, pastries, and artisan baked goods made with love. Custom cakes for every occasion.",
-  keywords: ["bakery", "custom cakes", "baked goods", "artisan", "pastries", "Rise By Amy"],
+  metadataBase: new URL(APP_URL),
+  title: { default: 'Rise By Amy — Purely Proofed', template: '%s | Rise By Amy' },
+  description: 'Handcrafted cakes, pastries, and artisan baked goods made with love. Custom cakes for every occasion.',
+  keywords: ['bakery', 'custom cakes', 'baked goods', 'artisan', 'pastries', 'Rise By Amy'],
+  openGraph: {
+    type: 'website',
+    siteName: 'Rise By Amy',
+    title: 'Rise By Amy — Purely Proofed',
+    description: 'Handcrafted cakes, pastries, and artisan baked goods made with love.',
+    images: [{ url: '/images/logo-cropped.png', width: 400, height: 335, alt: 'Rise By Amy' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rise By Amy — Purely Proofed',
+    description: 'Handcrafted cakes, pastries, and artisan baked goods made with love.',
+  },
 };
 
 export default function RootLayout({

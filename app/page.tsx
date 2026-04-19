@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/layout/header";
+import NewsletterSignup from "@/components/newsletter-signup";
+import DeliveryZoneChecker from "@/components/delivery-zone-checker";
 
 export default function Home() {
   return (
@@ -101,6 +103,42 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Delivery Zone + Newsletter */}
+      <section className="py-16 px-4 bg-neutral-cream">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-start max-w-4xl mx-auto">
+            <div>
+              <h3 className="font-display text-2xl font-bold text-neutral-charcoal mb-4">Do We Deliver to You?</h3>
+              <DeliveryZoneChecker />
+            </div>
+            <div>
+              <h3 className="font-display text-2xl font-bold text-neutral-charcoal mb-2">Follow Along</h3>
+              <p className="text-gray-500 text-sm mb-4">Check out our latest creations on Instagram.</p>
+              <div className="grid grid-cols-3 gap-2">
+                {['🎂', '🧁', '🍓', '🍋', '🍪', '🎁'].map((emoji, i) => (
+                  <div
+                    key={i}
+                    className="aspect-square bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl flex items-center justify-center text-3xl hover:scale-105 transition-transform cursor-pointer"
+                  >
+                    {emoji}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-4 text-sm text-primary-500 hover:underline font-medium"
+              >
+                @risebyamy on Instagram →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <NewsletterSignup />
 
       {/* Footer */}
       <footer className="bg-neutral-charcoal text-white py-12 px-4">

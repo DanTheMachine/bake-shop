@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
 import ProductGrid from '@/components/products/product-grid';
 import ProductFilters from '@/components/products/product-filters';
 import Header from '@/components/layout/header';
+
+export const metadata: Metadata = {
+  title: 'Shop',
+  description: 'Browse our full selection of handcrafted cakes, pastries, seasonal treats, and gift boxes — ready for pickup.',
+};
 
 export default async function ShopPage({
   searchParams,
