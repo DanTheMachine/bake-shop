@@ -100,6 +100,21 @@ npm test
   - `tests/e2e/cart.spec.ts` — cart loading from seeded localStorage
   - `tests/e2e/custom-cakes.spec.ts` — form renders, native validation
 
+## Upcoming Work
+
+### Social Media Presence (Phase 8 — not yet started)
+
+Full plan in [`docs/social-media-plan.md`](/Users/danieltorres/projects/bake-shop/docs/social-media-plan.md).
+
+Phases in recommended order:
+1. **Footer social links** — Instagram/Facebook/TikTok/Pinterest icons in footer; add `lib/social.ts` config
+2. **Share buttons** — `<ShareButton>` component (Web Share API + clipboard fallback) on product and custom-cakes pages
+3. **OG metadata enhancements** — per-product `generateMetadata` in `app/shop/[id]/page.tsx`; OG for `/custom-cakes` and `/about`; branded `public/og-default.jpg`
+4. **Follow CTAs** — `<SocialFollowStrip>` above newsletter on homepage; share prompt on order confirmation page
+5. **Instagram feed** — replace homepage placeholder with real grid; static curated images first, live API later
+
+Key open questions before implementation: social handles/URLs, whether an Instagram Business account exists, and the production `NEXT_PUBLIC_BASE_URL`.
+
 ## Notes
 
 - Playwright uses placeholder Supabase env vars in config/CI so smoke tests can boot the app without production credentials.
