@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -5,6 +6,37 @@ import { formatPrice } from '@/lib/utils';
 import Header from '@/components/layout/header';
 import AddToCartButton from '@/components/products/add-to-cart-button';
 import ProductReviews from '@/components/products/product-reviews';
+import ShareButton from '@/components/ui/share-button';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const { data: product } = await supabase
+    .from('products')
+    .select('name, description')
+    .eq('id', id)
+    .single();
+
+  if (!product) return {};
+
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: `${product.name} — Rise By Amy`,
+      description: product.description,
+      url: `/shop/${id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} — Rise By Amy`,
+      description: product.description,
+    },
+  };
+}
 
 const emojiMap: Record<string, string> = {
   'Classic Chocolate Cake': '🍫',
@@ -99,6 +131,10 @@ export default async function ProductDetailPage({
                     <span className="font-medium">Currently Unavailable</span>
                   </div>
                 )}
+              </div>
+
+              <div className="mb-6">
+                <ShareButton title={product.name} text={`Check out ${product.name} from Rise By Amy!`} />
               </div>
 
               {product.requires_custom_form ? (

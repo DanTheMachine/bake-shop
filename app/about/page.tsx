@@ -1,11 +1,22 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/layout/header';
+import Footer from '@/components/layout/footer';
 import NewsletterSignup from '@/components/newsletter-signup';
 
 export const metadata: Metadata = {
   title: 'About',
   description: 'Learn about Rise by Amy — handcrafted baked goods made with love in every batch.',
+  openGraph: {
+    title: 'About Rise By Amy',
+    description: 'From a home kitchen to your table — learn the story behind Rise By Amy\'s handcrafted baked goods.',
+    url: '/about',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Rise By Amy',
+    description: 'From a home kitchen to your table — learn the story behind Rise By Amy\'s handcrafted baked goods.',
+  },
 };
 
 export default function AboutPage() {
@@ -35,10 +46,10 @@ export default function AboutPage() {
             <p>
               Every item is made from scratch using quality ingredients. No shortcuts, no preservatives — just
               honest baking done the right way. From birthday cakes to fresh sourdough, each order gets the same
-              care and attention whether it's your first or your fiftieth.
+              care and attention whether it&apos;s your first or your fiftieth.
             </p>
             <p>
-              We're a small operation and proud of it. That means you're always getting something made by hand,
+              We&apos;re a small operation and proud of it. That means you&apos;re always getting something made by hand,
               not a factory.
             </p>
           </div>
@@ -83,36 +94,7 @@ export default function AboutPage() {
 
       <NewsletterSignup />
 
-      {/* Footer */}
-      <footer className="bg-neutral-charcoal text-white py-12 px-4">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h4 className="font-display text-2xl font-bold mb-4 text-primary-400">Rise By Amy</h4>
-              <p className="text-gray-400">Purely Proofed. Handcrafted baked goods made with love.</p>
-            </div>
-            <div>
-              <h5 className="font-semibold mb-4">Quick Links</h5>
-              <div className="space-y-2">
-                <Link href="/shop" className="block text-gray-400 hover:text-primary-400 transition-colors">Shop</Link>
-                <Link href="/custom-cakes" className="block text-gray-400 hover:text-primary-400 transition-colors">Custom Cakes</Link>
-                <Link href="/about" className="block text-gray-400 hover:text-primary-400 transition-colors">About</Link>
-              </div>
-            </div>
-            <div>
-              <h5 className="font-semibold mb-4">Contact</h5>
-              <div className="space-y-2 text-gray-400">
-                <p>📍 123 Baker Street</p>
-                <p>📞 (555) 123-4567</p>
-                <p>✉️ hello@sweetdelights.com</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 Rise By Amy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
