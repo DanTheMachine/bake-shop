@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import NewsletterSignup from "@/components/newsletter-signup";
 import DeliveryZoneChecker from "@/components/delivery-zone-checker";
+import InstagramGrid from "@/components/instagram-grid";
+import SocialFollowStrip from "@/components/social-follow-strip";
 
 export default function Home() {
   return (
@@ -115,64 +118,17 @@ export default function Home() {
             <div>
               <h3 className="font-display text-2xl font-bold text-neutral-charcoal mb-2">Follow Along</h3>
               <p className="text-gray-500 text-sm mb-4">Check out our latest creations on Instagram.</p>
-              <div className="grid grid-cols-3 gap-2">
-                {['🎂', '🧁', '🍓', '🍋', '🍪', '🎁'].map((emoji, i) => (
-                  <div
-                    key={i}
-                    className="aspect-square bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl flex items-center justify-center text-3xl hover:scale-105 transition-transform cursor-pointer"
-                  >
-                    {emoji}
-                  </div>
-                ))}
-              </div>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-4 text-sm text-primary-500 hover:underline font-medium"
-              >
-                @risebyamy on Instagram →
-              </a>
+              <InstagramGrid />
             </div>
           </div>
         </div>
       </section>
 
+      <SocialFollowStrip />
+
       <NewsletterSignup />
 
-      {/* Footer */}
-      <footer className="bg-neutral-charcoal text-white py-12 px-4">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h4 className="font-display text-2xl font-bold mb-4 text-primary-400">Rise By Amy</h4>
-              <p className="text-gray-400">Purely Proofed. Handcrafted baked goods made with love.</p>
-            </div>
-
-            <div>
-              <h5 className="font-semibold mb-4">Quick Links</h5>
-              <div className="space-y-2">
-                <Link href="/shop" className="block text-gray-400 hover:text-primary-400 transition-colors">Shop</Link>
-                <Link href="/custom-cakes" className="block text-gray-400 hover:text-primary-400 transition-colors">Custom Cakes</Link>
-                <Link href="/about" className="block text-gray-400 hover:text-primary-400 transition-colors">About</Link>
-              </div>
-            </div>
-
-            <div>
-              <h5 className="font-semibold mb-4">Contact</h5>
-              <div className="space-y-2 text-gray-400">
-                <p>📍 123 Baker Street</p>
-                <p>📞 (555) 123-4567</p>
-                <p>✉️ hello@sweetdelights.com</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 Rise By Amy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
